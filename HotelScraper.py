@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import csv
 from tkcalendar import Calendar
+from tkinter import messagebox 
 
 class HotelScraperApp:
     def __init__(self, root):
@@ -12,7 +13,7 @@ class HotelScraperApp:
         self.root.title("Hotel Scraper App")
 
         # City Selection
-        self.city_label = ttk.Label(root, text="Select City:")
+        self.city_label = ttk.Label(root, text="City")
         self.city_label.grid(row=0, column=0, padx=10, pady=10)
 
         self.city_var = tk.StringVar()
@@ -21,21 +22,21 @@ class HotelScraperApp:
         self.city_combobox.grid(row=0, column=1, padx=10, pady=10)
 
         # Check-in Date
-        self.checkin_label = ttk.Label(root, text="Check-in Date:")
+        self.checkin_label = ttk.Label(root, text="Check-in Date")
         self.checkin_label.grid(row=1, column=0, padx=10, pady=10)
 
         self.checkin_calendar = Calendar(root, selectmode="day", year=2024, month=5, day=1)
         self.checkin_calendar.grid(row=1, column=1, padx=10, pady=10)
 
         # Check-out Date
-        self.checkout_label = ttk.Label(root, text="Check-out Date:")
+        self.checkout_label = ttk.Label(root, text="Check-out Date")
         self.checkout_label.grid(row=2, column=0, padx=10, pady=10)
 
         self.checkout_calendar = Calendar(root, selectmode="day", year=2024, month=5, day=1)
         self.checkout_calendar.grid(row=2, column=1, padx=10, pady=10)
         
         # Currency Selection
-        self.currency_label = ttk.Label(root, text="Currency:")
+        self.currency_label = ttk.Label(root, text="Currency")
         self.currency_label.grid(row=3, column=0, padx=10, pady=10)
 
         self.currency_var = tk.StringVar(value="Euro")
@@ -44,7 +45,7 @@ class HotelScraperApp:
         self.currency_combobox.grid(row=3, column=1, padx=5, pady=10)
 
         # Sort by Selection
-        self.sort_by_label = ttk.Label(root, text="Sort by:")
+        self.sort_by_label = ttk.Label(root, text="Sort by")
         self.sort_by_label.grid(row=4, column=0, padx=10, pady=10)
 
         self.sort_by_var = tk.StringVar(value="Review Score")
@@ -52,9 +53,18 @@ class HotelScraperApp:
         self.sort_by_combobox['values'] = ["Review Score", "Secondary Review Score"]
         self.sort_by_combobox.grid(row=4, column=1, padx=10, pady=10)
 
+        # How much hotels selection
+        self.top_label = ttk.Label(root, text="Top:")
+        self.top_label.grid(row=5, column=0, padx=10, pady=10)
+
+        self.top_var = tk.IntVar(value=5)
+        self.top_combobox = ttk.Combobox(root, textvariable=self.top_var)
+        self.top_combobox['values'] = [5, 10, 15, 20]
+        self.top_combobox.grid(row=5, column=1, padx=5, pady=10)
+
         # Search Button
         self.search_button = ttk.Button(root, text="Search", command=self.search_hotels)
-        self.search_button.grid(row=5, columnspan=2, padx=10, pady=10)
+        self.search_button.grid(row=6, columnspan=2, padx=10, pady=10)
 
         # Large Font for Hotel Names
         self.large_font = ("Helvetica", 10, "bold")
@@ -76,14 +86,32 @@ class HotelScraperApp:
             for hotel in hotels_list:
                 writer.writerow(hotel)
 
+    def date_validation(self, checkin_date, checkout_date):
+        current_date = datetime.now()
+        if checkin_date < current_date or checkout_date < current_date:
+            messagebox.showerror("Error", "Check-in or Check-out date cannot be in the past.")
+            return False
+        
+        # Checkin date should be after the checkout date
+        if checkin_date >= checkout_date:
+            messagebox.showerror("Error", "Check-in date must be before Check-out date.")
+            return False
+        
+        return True
+
+
     def search_hotels(self):
         self.text_box.delete(1.0, tk.END)  # Clear any previous text
         
         city = self.city_var.get()
+        # Date validation
         checkin_date = self.checkin_calendar.get_date()
-        formatted_checkin_date = datetime.strptime(checkin_date, "%m/%d/%y").strftime("%Y-%m-%d")
+        formatted_checkin_date = datetime.strptime(checkin_date, "%m/%d/%y")
         checkout_date = self.checkout_calendar.get_date()
-        formatted_checkout_date = datetime.strptime(checkout_date, "%m/%d/%y").strftime("%Y-%m-%d")
+        formatted_checkout_date = datetime.strptime(checkout_date, "%m/%d/%y")
+        
+        if not self.date_validation(formatted_checkin_date, formatted_checkout_date):
+            return
         currency = self.currency_var.get()
         sort_by = self.sort_by_var.get()  # Get the selected sorting method
         
@@ -118,6 +146,7 @@ class HotelScraperApp:
         hotels = soup.findAll('div', {'data-testid': 'property-card'})
 
         hotels_data = []
+        sorted_hotels = []
 
         # Loop over the hotel elements and extract the desired data
         for hotel in hotels:
@@ -185,9 +214,9 @@ class HotelScraperApp:
                                    key=lambda x: float(x['secondary_review_score']), reverse=True)
 
         # Select top 5 hotels
-        sorted_hotels = sorted_hotels[:5]
+        sorted_hotels = sorted_hotels[:self.top_var.get()]
 
-        # Write the best 5 hotels in the text box
+        # Write the best hotels in the text box
         counter = 1
         for hotel in sorted_hotels:
             self.text_box.insert(tk.END, f"\nHOTEL {counter}\n")
