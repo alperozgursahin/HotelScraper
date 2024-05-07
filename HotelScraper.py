@@ -11,67 +11,90 @@ class HotelScraperApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Hotel Scraper App")
+        self.large_font = ("Helvetica", 13, "bold")
+        bg_color = "#F2F2F2"
 
         # City Selection
-        self.city_label = ttk.Label(root, text="City")
-        self.city_label.grid(row=0, column=0, padx=10, pady=10)
+        self.city_label = ttk.Label(root, text="Select City",font = self.large_font)
+        self.city_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.city_label.configure(background=bg_color)
 
         self.city_var = tk.StringVar()
         self.city_combobox = ttk.Combobox(root, textvariable=self.city_var)
         self.city_combobox['values'] = ['Roma', "Stockholm","Venice","Warsaw","Helsinki","Amsterdam","Vilnius","Paris","Fulda","Liverpool","Berlin", "Seoul", "Frankfurt", "Kyoto"]  # These area for cities
-        self.city_combobox.grid(row=0, column=1, padx=10, pady=10)
+        self.city_combobox.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 
+        current_date = datetime.now()
         # Check-in Date
-        self.checkin_label = ttk.Label(root, text="Check-in Date")
-        self.checkin_label.grid(row=1, column=0, padx=10, pady=10)
+        self.checkin_label = ttk.Label(root, text="Check-in Date",font = self.large_font)
+        self.checkin_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        self.checkin_label.configure(background=bg_color)
 
-        self.checkin_calendar = Calendar(root, selectmode="day", year=2024, month=5, day=1)
-        self.checkin_calendar.grid(row=1, column=1, padx=10, pady=10)
+        self.checkin_calendar = Calendar(root, selectmode="day", year=current_date.year, month=current_date.month, day=current_date.day)
+        self.checkin_calendar.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
         # Check-out Date
-        self.checkout_label = ttk.Label(root, text="Check-out Date")
-        self.checkout_label.grid(row=2, column=0, padx=10, pady=10)
+        self.checkout_label = ttk.Label(root, text="Check-out Date",font = self.large_font)
+        self.checkout_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.checkout_label.configure(background=bg_color)
 
-        self.checkout_calendar = Calendar(root, selectmode="day", year=2024, month=5, day=1)
-        self.checkout_calendar.grid(row=2, column=1, padx=10, pady=10)
+        self.checkout_calendar = Calendar(root, selectmode="day", year=current_date.year, month=current_date.month, day=current_date.day)
+        self.checkout_calendar.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
         
         # Currency Selection
-        self.currency_label = ttk.Label(root, text="Currency")
-        self.currency_label.grid(row=3, column=0, padx=10, pady=10)
+        self.currency_label = ttk.Label(root, text="Currency",font = self.large_font)
+        self.currency_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        self.currency_label.configure(background=bg_color)
 
         self.currency_var = tk.StringVar(value="Euro")
         self.currency_combobox = ttk.Combobox(root, textvariable=self.currency_var)
         self.currency_combobox['values'] = ["TL", "Euro"]
-        self.currency_combobox.grid(row=3, column=1, padx=5, pady=10)
+        self.currency_combobox.grid(row=3, column=1, padx=5, pady=10, sticky="ew")
 
         # Sort by Selection
-        self.sort_by_label = ttk.Label(root, text="Sort by")
-        self.sort_by_label.grid(row=4, column=0, padx=10, pady=10)
+        self.sort_by_label = ttk.Label(root, text="Sort by",font = self.large_font)
+        self.sort_by_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        self.sort_by_label.configure(background=bg_color)
 
         self.sort_by_var = tk.StringVar(value="Review Score")
         self.sort_by_combobox = ttk.Combobox(root, textvariable=self.sort_by_var)
         self.sort_by_combobox['values'] = ["Review Score", "Secondary Review Score"]
-        self.sort_by_combobox.grid(row=4, column=1, padx=10, pady=10)
+        self.sort_by_combobox.grid(row=4, column=1, padx=5, pady=10, sticky="ew")
 
         # How much hotels selection
-        self.top_label = ttk.Label(root, text="Top:")
-        self.top_label.grid(row=5, column=0, padx=10, pady=10)
+        self.top_label = ttk.Label(root, text="Top",font = self.large_font)
+        self.top_label.grid(row=5, column=0, padx=10, pady=10, sticky="w")
+        self.top_label.configure(background=bg_color)
 
         self.top_var = tk.IntVar(value=5)
         self.top_combobox = ttk.Combobox(root, textvariable=self.top_var)
         self.top_combobox['values'] = [5, 10, 15, 20]
-        self.top_combobox.grid(row=5, column=1, padx=5, pady=10)
+        self.top_combobox.grid(row=5, column=1, padx=5, pady=10, sticky="ew")
 
         # Search Button
         self.search_button = ttk.Button(root, text="Search", command=self.search_hotels)
         self.search_button.grid(row=6, columnspan=2, padx=10, pady=10)
-
-        # Large Font for Hotel Names
-        self.large_font = ("Helvetica", 10, "bold")
+        self.search_button.configure(style='LightButton.TButton')
 
         # Text Box
-        self.text_box = tk.Text(root, height=35, width=70, font=self.large_font)
-        self.text_box.grid(row=0, column=3, rowspan=6, padx=10, pady=10)
+        self.text_box = tk.Text(root, height=35, width=90, font=("Helvetica", 14))
+        self.text_box.grid(row=0, column=2, rowspan=7, padx=10, pady=10, sticky="nsew")  # Expand all ways
+        self.text_box.configure(background="#E9DCD6", borderwidth=2, relief="sunken")
+        self.text_box.tag_configure("bold", font=("Helvetica",16,"bold"), foreground="black")  # Bold style for left column
+
+        # Configure row and column weights
+        for i in range(7):  # 7 rows
+            root.rowconfigure(i, weight=1)
+        for i in range(3):  # 3 columns
+            root.columnconfigure(i, weight=1)
+
+        # Configure row and column weights
+        for i in range(7):  # 7 rows
+            root.rowconfigure(i, weight=1)
+        for i in range(2):  # 2 columns
+            root.columnconfigure(i, weight=1)
+        
+        root.configure(bg=bg_color)
         
 
     def save_hotels_to_csv(self, hotels_list, filename):
@@ -132,7 +155,9 @@ class HotelScraperApp:
             "Frankfurt": 1771148,
             "Kyoto": 235402
         }
-
+        if (city not in dest_id.keys()):
+            messagebox.showerror("Error","City Not Found!")
+            return
         # Web scraping area
         url = f"https://www.booking.com/searchresults.en-gb.html?ss=Roma&ssne=Roma&ssne_untouched=Roma&efdco=1&label=gen173nr-1FCAQoggJCC3NlYXJjaF9yb21lSDNYBGjkAYgBAZgBKLgBF8gBDNgBAegBAfgBEIgCAagCA7gCzfPHsQbAAgHSAiRjYjQ3MDI5My03MWY3LTRhNDQtYTBmOC03NDVmODhhNmMyYmTYAgXgAgE&aid=304142&lang=en-gb&sb=1&src_elem=sb&src=searchresults&dest_id=-{dest_id[city]}&dest_type=city&checkin={formatted_checkin_date}&checkout={formatted_checkout_date}&group_adults=2&no_rooms=1&group_children=0&soz=1&lang_changed=1"
 
@@ -191,15 +216,16 @@ class HotelScraperApp:
             secondary_review_score = hotel.find('span', class_='a3332d346a')
             if secondary_review_score:
                 secondary_review_score_text = secondary_review_score.text.strip()
-                rating = secondary_review_score_text.split(' ')[-1]
+                print(secondary_review_score_text)
+                
             else:
-                rating = "N/A"
+                secondary_review_score_text = "N/A"
 
             # Append hotels_data with info about hotel
             hotels_data.append({
                 'name': name,
                 'review_score': review_score + " " + review_type,
-                'secondary_review_score': rating,  # Include secondary review score
+                'secondary_review_score': secondary_review_score_text,  # Include secondary review score
                 'price': price,
                 'address': address,
                 'distance': distance_to_center,
@@ -211,7 +237,7 @@ class HotelScraperApp:
             sorted_hotels = sorted(hotels_data, key=lambda x: x['review_score'], reverse=True)
         elif sort_by == "Secondary Review Score":
             sorted_hotels = sorted([hotel for hotel in hotels_data if hotel['secondary_review_score'] != 'N/A'], 
-                                   key=lambda x: float(x['secondary_review_score']), reverse=True)
+                                   key=lambda x: float(x['secondary_review_score'].split(' ')[-1]), reverse=True)
 
         # Select top 5 hotels
         sorted_hotels = sorted_hotels[:self.top_var.get()]
@@ -219,22 +245,33 @@ class HotelScraperApp:
         # Write the best hotels in the text box
         counter = 1
         for hotel in sorted_hotels:
-            self.text_box.insert(tk.END, f"\nHOTEL {counter}\n")
-            self.text_box.insert(tk.END, f"Name: {hotel['name']}\n")
-            self.text_box.insert(tk.END, f"Address: {hotel['address']}\n")
-            self.text_box.insert(tk.END, f"Distance: {hotel['distance']}\n")
-            self.text_box.insert(tk.END, f"Review Score: {hotel['review_score']}\n")
-            self.text_box.insert(tk.END, f"Secondary Review Score: {hotel['secondary_review_score']}\n")
+            self.text_box.insert(tk.END, f"\n HOTEL {counter}\n", "bold")
+            self.text_box.insert(tk.END, f" Name: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel['name']}\n")
+            self.text_box.insert(tk.END, f" Address: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel['address']}\n")
+            self.text_box.insert(tk.END, f" Distance: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel['distance']}\n")
+            self.text_box.insert(tk.END, f" Review Score: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel['review_score']}\n")
+            self.text_box.insert(tk.END, f" Secondary Review Score: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel['secondary_review_score']}\n")
             hotel_price = hotel["price"]
-            self.text_box.insert(tk.END, f"Base price: {hotel_price} TL\n")
             if currency == "Euro":
                 converted_price = round(hotel_price / 30)
-                self.text_box.insert(tk.END, f"Price: {converted_price} Euro\n")
+                self.text_box.insert(tk.END, f" Price: ", "bold")
+                self.text_box.insert(tk.END, f"{converted_price} Euro\n")
             else: 
-                self.text_box.insert(tk.END, f"Price: {hotel_price} TL\n")
-            self.text_box.insert(tk.END, f"City: {hotel['city']}\n")
-            self.text_box.insert(tk.END, f"Check-in Date: {checkin_date}\n")
-            self.text_box.insert(tk.END, f"Check-out Date: {checkout_date}\n")
+                self.text_box.insert(tk.END, f" Price: ", "bold")
+                self.text_box.insert(tk.END, f"{hotel_price} TL\n")
+            """ self.text_box.insert(tk.END, f"City: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel['city']}\n")
+            self.text_box.insert(tk.END, f"Check-in Date: ", "bold")
+            self.text_box.insert(tk.END, f"{checkin_date}\n")
+            self.text_box.insert(tk.END, f"Check-out Date: ", "bold")
+            self.text_box.insert(tk.END, f"{checkout_date}\n")
+            self.text_box.insert(tk.END, f"Base price: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel_price} TL\n") """
             counter += 1
 
         # Save top 5 hotels to CSV file
