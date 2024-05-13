@@ -7,6 +7,29 @@ import csv
 from tkcalendar import Calendar
 from tkinter import messagebox 
 
+# Different cities have different destination id's
+dest_id = {
+    "Roma": 126693,
+    "Stockholm": 2524279,
+    "Venice": 132007,
+    "Warsaw": 534433,
+    "Helsinki": 1364995,
+    "Amsterdam": 2140479,
+    "Vilnius": 2620663,
+    "Paris": 1456928,
+    "Fulda": 1772866,
+    "Liverpool": 2601422,
+    "Berlin": 1746443,
+    "Seoul": 716583,
+    "Frankfurt": 1771148,
+    "Kyoto": 235402,
+    "Rotterdam":2152403,
+    "Brussels":1955538,
+    "Manchester":2602512,
+    "Hamburg":1785434,
+    "Dortmund":1761123
+}
+
 class HotelScraperApp:
     def __init__(self, root):
         self.root = root
@@ -21,7 +44,7 @@ class HotelScraperApp:
 
         self.city_var = tk.StringVar()
         self.city_combobox = ttk.Combobox(root, textvariable=self.city_var)
-        self.city_combobox['values'] = ['Roma', "Stockholm","Venice","Warsaw","Helsinki","Amsterdam","Vilnius","Paris","Fulda","Liverpool","Berlin", "Seoul", "Frankfurt", "Kyoto"]  # These area for cities
+        self.city_combobox['values'] = list(dest_id.keys())  # These area for cities
         self.city_combobox.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 
         current_date = datetime.now()
@@ -47,9 +70,16 @@ class HotelScraperApp:
         self.currency_label.configure(background=bg_color)
 
         self.currency_var = tk.StringVar(value="Euro")
-        self.currency_combobox = ttk.Combobox(root, textvariable=self.currency_var)
-        self.currency_combobox['values'] = ["TL", "Euro"]
-        self.currency_combobox.grid(row=3, column=1, padx=5, pady=10, sticky="ew")
+        
+        # Currency Selection Radio Buttons
+        self.currency_frame = ttk.Frame(root)
+        self.currency_frame.grid(row=3, column=1, padx=5, pady=10, sticky="ew")
+
+        self.euro_radio = ttk.Radiobutton(self.currency_frame, text="Euro", variable=self.currency_var, value="Euro")
+        self.euro_radio.grid(row=0, column=0, padx=(0, 10))
+
+        self.tl_radio = ttk.Radiobutton(self.currency_frame, text="TL", variable=self.currency_var, value="TL")
+        self.tl_radio.grid(row=0, column=1)
 
         # Sort by Selection
         self.sort_by_label = ttk.Label(root, text="Sort by",font = self.large_font)
@@ -138,23 +168,7 @@ class HotelScraperApp:
         currency = self.currency_var.get()
         sort_by = self.sort_by_var.get()  # Get the selected sorting method
         
-        # Different cities have different destination id's
-        dest_id = {
-            "Roma": 126693,
-            "Stockholm": 2524279,
-            "Venice": 132007,
-            "Warsaw": 534433,
-            "Helsinki": 1364995,
-            "Amsterdam": 2140479,
-            "Vilnius": 2620663,
-            "Paris": 1456928,
-            "Fulda": 1772866,
-            "Liverpool": 2601422,
-            "Berlin": 1746443,
-            "Seoul": 716583,
-            "Frankfurt": 1771148,
-            "Kyoto": 235402
-        }
+        
         if (city not in dest_id.keys()):
             messagebox.showerror("Error","City Not Found!")
             return
@@ -216,7 +230,6 @@ class HotelScraperApp:
             secondary_review_score = hotel.find('span', class_='a3332d346a')
             if secondary_review_score:
                 secondary_review_score_text = secondary_review_score.text.strip()
-                print(secondary_review_score_text)
                 
             else:
                 secondary_review_score_text = "N/A"
