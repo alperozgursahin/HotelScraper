@@ -81,7 +81,7 @@ class HotelScraperApp:
         self.tl_radio = ttk.Radiobutton(self.currency_frame, text="TL", variable=self.currency_var, value="TL")
         self.tl_radio.grid(row=0, column=1)
 
-        # Sort by Selection
+        # Sort by Selection Review Score or Secondary Review Score
         self.sort_by_label = ttk.Label(root, text="Sort by",font = self.large_font)
         self.sort_by_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
         self.sort_by_label.configure(background=bg_color)
@@ -91,7 +91,7 @@ class HotelScraperApp:
         self.sort_by_combobox['values'] = ["Review Score", "Secondary Review Score"]
         self.sort_by_combobox.grid(row=4, column=1, padx=5, pady=10, sticky="ew")
 
-        # How much hotels selection
+        # Number of hotels Selection
         self.top_label = ttk.Label(root, text="Top",font = self.large_font)
         self.top_label.grid(row=5, column=0, padx=10, pady=10, sticky="w")
         self.top_label.configure(background=bg_color)
@@ -117,12 +117,6 @@ class HotelScraperApp:
             root.rowconfigure(i, weight=1)
         for i in range(3):  # 3 columns
             root.columnconfigure(i, weight=1)
-
-        # Configure row and column weights
-        for i in range(7):  # 7 rows
-            root.rowconfigure(i, weight=1)
-        for i in range(2):  # 2 columns
-            root.columnconfigure(i, weight=1)
         
         root.configure(bg=bg_color)
         
@@ -130,7 +124,7 @@ class HotelScraperApp:
     def save_hotels_to_csv(self, hotels_list, filename):
         # Create the CSV file and write the header line
         with open(filename, mode='w', newline='', encoding='utf-8') as file:
-            fieldnames = ['name', 'review_score','secondary_review_score','price', 'address', 'distance', 'city']
+            fieldnames = ['name', 'review_score','secondary_review_score','price', 'address', 'distance', 'city','review_number']
             writer = csv.DictWriter(file, fieldnames=fieldnames)
 
             writer.writeheader()
@@ -207,6 +201,7 @@ class HotelScraperApp:
                 review_score_text = review_score_element.text.strip()
                 parts = review_score_text.split("Scored ")
                 review_score = parts[1].split()[0]  
+                review_number = parts[1].split()[-2]
                 review_info = parts[1].split(maxsplit=2)[1]  # just take review info
                 review_type = review_info.split()[0]  # review type
             else:
@@ -242,7 +237,8 @@ class HotelScraperApp:
                 'price': price,
                 'address': address,
                 'distance': distance_to_center,
-                'city': city
+                'city': city,
+                "review_number": review_number
             })
 
         # Sort hotels_data based on the selected sorting method
@@ -252,7 +248,7 @@ class HotelScraperApp:
             sorted_hotels = sorted([hotel for hotel in hotels_data if hotel['secondary_review_score'] != 'N/A'], 
                                    key=lambda x: float(x['secondary_review_score'].split(' ')[-1]), reverse=True)
 
-        # Select top 5 hotels
+        # Select Top User Choice Hotels 
         sorted_hotels = sorted_hotels[:self.top_var.get()]
 
         # Write the best hotels in the text box
@@ -269,6 +265,8 @@ class HotelScraperApp:
             self.text_box.insert(tk.END, f"{hotel['review_score']}\n")
             self.text_box.insert(tk.END, f" Secondary Review Score: ", "bold")
             self.text_box.insert(tk.END, f"{hotel['secondary_review_score']}\n")
+            self.text_box.insert(tk.END, f" Review Number: ", "bold")
+            self.text_box.insert(tk.END, f"{hotel['review_number']}\n")
             hotel_price = hotel["price"]
             if currency == "Euro":
                 converted_price = round(hotel_price / 30)
