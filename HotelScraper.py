@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import tkinter as tk
 from tkinter import ttk
 from bs4 import BeautifulSoup
@@ -37,78 +37,87 @@ class HotelScraperApp:
         self.large_font = ("Helvetica", 13, "bold")
         bg_color = "#F2F2F2"
 
+        # Title Label
+        self.title_label = ttk.Label(root, text = "Best Hotels For You", font=("Helvetica",20,"bold"))
+        self.title_label.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        self.title_label.configure(background=bg_color)
+
+        self.booking_label = ttk.Label(root, text = "Retrieved from 'booking.com'", font = ("Helvetica", 11, "italic"))
+        self.booking_label.grid(row=0, column=2, padx=10, pady=10, sticky="w")
+        self.booking_label.configure(background=bg_color)
+
         # City Selection
         self.city_label = ttk.Label(root, text="Select City",font = self.large_font)
-        self.city_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.city_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
         self.city_label.configure(background=bg_color)
 
         self.city_var = tk.StringVar()
         self.city_combobox = ttk.Combobox(root, textvariable=self.city_var)
         self.city_combobox['values'] = list(dest_id.keys())  # These area for cities
-        self.city_combobox.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        self.city_combobox.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
         current_date = datetime.now()
         # Check-in Date
         self.checkin_label = ttk.Label(root, text="Check-in Date",font = self.large_font)
-        self.checkin_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        self.checkin_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
         self.checkin_label.configure(background=bg_color)
 
-        self.checkin_calendar = Calendar(root, selectmode="day", year=current_date.year, month=current_date.month, day=current_date.day)
-        self.checkin_calendar.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+        self.checkin_calendar = Calendar(root, selectmode="day", year=current_date.year, month=current_date.month, day=current_date.day,mindate = current_date)
+        self.checkin_calendar.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
 
         # Check-out Date
         self.checkout_label = ttk.Label(root, text="Check-out Date",font = self.large_font)
-        self.checkout_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.checkout_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
         self.checkout_label.configure(background=bg_color)
 
-        self.checkout_calendar = Calendar(root, selectmode="day", year=current_date.year, month=current_date.month, day=current_date.day)
-        self.checkout_calendar.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+        self.checkout_calendar = Calendar(root, selectmode="day", year=current_date.year, month=current_date.month, day=current_date.day,mindate = current_date)
+        self.checkout_calendar.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
         
         # Currency Selection
         self.currency_label = ttk.Label(root, text="Currency",font = self.large_font)
-        self.currency_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        self.currency_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
         self.currency_label.configure(background=bg_color)
 
         self.currency_var = tk.StringVar(value="Euro")
         
         # Currency Selection Radio Buttons
         self.currency_frame = ttk.Frame(root)
-        self.currency_frame.grid(row=3, column=1, padx=5, pady=10, sticky="ew")
+        self.currency_frame.grid(row=4, column=1, padx=5, pady=10, sticky="ew")
 
         self.euro_radio = ttk.Radiobutton(self.currency_frame, text="Euro", variable=self.currency_var, value="Euro")
-        self.euro_radio.grid(row=0, column=0, padx=(0, 10))
+        self.euro_radio.grid(row=1, column=0, padx=(0, 10))
 
         self.tl_radio = ttk.Radiobutton(self.currency_frame, text="TL", variable=self.currency_var, value="TL")
-        self.tl_radio.grid(row=0, column=1)
+        self.tl_radio.grid(row=1, column=1)
 
         # Sort by Selection Review Score or Secondary Review Score
         self.sort_by_label = ttk.Label(root, text="Sort by",font = self.large_font)
-        self.sort_by_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        self.sort_by_label.grid(row=5, column=0, padx=10, pady=10, sticky="w")
         self.sort_by_label.configure(background=bg_color)
 
         self.sort_by_var = tk.StringVar(value="Review Score")
         self.sort_by_combobox = ttk.Combobox(root, textvariable=self.sort_by_var)
         self.sort_by_combobox['values'] = ["Review Score", "Secondary Review Score"]
-        self.sort_by_combobox.grid(row=4, column=1, padx=5, pady=10, sticky="ew")
+        self.sort_by_combobox.grid(row=5, column=1, padx=5, pady=10, sticky="ew")
 
         # Number of hotels Selection
         self.top_label = ttk.Label(root, text="Top",font = self.large_font)
-        self.top_label.grid(row=5, column=0, padx=10, pady=10, sticky="w")
+        self.top_label.grid(row=6, column=0, padx=10, pady=10, sticky="w")
         self.top_label.configure(background=bg_color)
 
         self.top_var = tk.IntVar(value=5)
         self.top_combobox = ttk.Combobox(root, textvariable=self.top_var)
         self.top_combobox['values'] = [5, 10, 15, 20]
-        self.top_combobox.grid(row=5, column=1, padx=5, pady=10, sticky="ew")
+        self.top_combobox.grid(row=6, column=1, padx=5, pady=10, sticky="ew")
 
         # Search Button
         self.search_button = ttk.Button(root, text="Search", command=self.search_hotels)
-        self.search_button.grid(row=6, columnspan=2, padx=10, pady=10)
+        self.search_button.grid(row=7, columnspan=2, padx=10, pady=10)
         self.search_button.configure(style='LightButton.TButton')
 
         # Text Box
         self.text_box = tk.Text(root, height=35, width=90, font=("Helvetica", 14))
-        self.text_box.grid(row=0, column=2, rowspan=7, padx=10, pady=10, sticky="nsew")  # Expand all ways
+        self.text_box.grid(row=1, column=2, rowspan=7, padx=10, pady=10, sticky="nsew")  # Expand all ways
         self.text_box.configure(background="#E9DCD6", borderwidth=2, relief="sunken")
         self.text_box.tag_configure("bold", font=("Helvetica",16,"bold"), foreground="black")  # Bold style for left column
 
@@ -134,7 +143,8 @@ class HotelScraperApp:
                 writer.writerow(hotel)
 
     def date_validation(self, checkin_date, checkout_date):
-        current_date = datetime.now()
+        current_date = datetime.now() - timedelta(days=1)
+
         if checkin_date < current_date or checkout_date < current_date:
             messagebox.showerror("Error", "Check-in or Check-out date cannot be in the past.")
             return False
@@ -142,6 +152,11 @@ class HotelScraperApp:
         # Checkin date should be after the checkout date
         if checkin_date >= checkout_date:
             messagebox.showerror("Error", "Check-in date must be before Check-out date.")
+            return False
+        
+        # Check-in and check-out dates should not be more than 90 days apart
+        if (checkout_date - checkin_date).days > 90:
+            messagebox.showerror("Error", "The difference between check-in and check-out dates cannot be more than 90 days.")
             return False
         
         return True
